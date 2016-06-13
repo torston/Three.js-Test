@@ -33,11 +33,11 @@ class Controls {
         var editModeController = gui.add(s, 'editingMode');
 
         sunRotateController.onFinishChange((value: boolean) => {
-            controls.setSunRotate(value);
+            this.setSunRotate(value);
         });
 
         editModeController.onFinishChange((value: boolean) => {
-            controls.setEditModeEnabled(value);
+            this.setEditModeEnabled(value);
         });
 
         var folder = gui.addFolder("Sun Position")
@@ -45,20 +45,24 @@ class Controls {
         folder.add(s, 'sunPositionY');
         folder.add(s, 'sunPositionZ');
 
-        var setPositionButton = { set: () => { controls.setPosition(); } };
+        var setPositionButton = { set: () => { this.setPosition(); } };
         folder.add(setPositionButton, 'set');
     }
 
     private setEditModeEnabled(value: boolean) {
         console.log("setEditModeEnabled: " + value);
+        this.r.clickEnable = value;
     }
 
     private setSunRotate(value: boolean) {
         console.log("sun rot: " + value);
+        this.r.sunRotate = value;
     }
 
     private setPosition() {
         let s = this.sceneSettings;
+
+        this.r.setSunPosition(s.sunPositionX,s.sunPositionY,s.sunPositionZ);
         console.log(s.sunPositionX + " " + s.sunPositionY + " " + s.sunPositionZ);
     }
 

@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a272ceddfac1d554854dd8bf8ad6b27e5b3b92ad/threejs/three.d.ts",
+    "raw": "registry:dt/three#0.0.0+20160602140506",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a272ceddfac1d554854dd8bf8ad6b27e5b3b92ad/threejs/three.d.ts"
+  }
+}

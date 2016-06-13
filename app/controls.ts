@@ -51,7 +51,7 @@ class Controls {
 
     private setEditModeEnabled(value: boolean) {
         console.log("setEditModeEnabled: " + value);
-        this.r.clickEnable = value;
+        this.r.setEditingMode(value);
     }
 
     private setSunRotate(value: boolean) {

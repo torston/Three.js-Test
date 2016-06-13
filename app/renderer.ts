@@ -3,14 +3,14 @@ class Renderer {
     public renderer: THREE.Renderer;
     public camera: THREE.Camera;
 
+    public sunRotate: boolean = true;
+    private clickEnable: boolean = true;
+
     private raycaster: THREE.Raycaster;
     private mouse: THREE.Vector2;
 
     private sphere: THREE.Object3D;
-    private time: number = 0;
-
-    sunRotate: boolean = true;
-    clickEnable: boolean = true;
+    private time = new THREE.Clock(true);
 
     public init() {
         this.mouse = new THREE.Vector2();
@@ -34,17 +34,16 @@ class Renderer {
         this.render();
     }
 
-    public setSunPosition(x:number,y:number,z:number){
-        this.sphere.position.set(x,y,z);
+    public setSunPosition(x: number, y: number, z: number) {
+        this.sphere.position.set(x, y, z);
     }
 
     render() {
-        this.time += 0.2;
-        this.animate(this.time);
+        this.animate(this.time.getDelta());
 
         if (this.sunRotate) {
-            this.sphere.position.x = 0 + 530 * Math.cos(this.time * Math.PI / 180);
-            this.sphere.position.y = Math.abs(0 + 530 * Math.sin(this.time * Math.PI / 180));
+            this.sphere.position.x = 0 + 530 * Math.cos(this.time.getElapsedTime() * Math.PI / 180);
+            this.sphere.position.y = Math.abs(0 + 530 * Math.sin(this.time.getElapsedTime() * Math.PI / 180));
         }
 
 
@@ -54,8 +53,7 @@ class Renderer {
     }
 
     animate(time: number) {
-        //console.log(time);
-
+       TWEEN.update();
     }
 
     createCamera(): THREE.PerspectiveCamera {
@@ -99,6 +97,22 @@ class Renderer {
 
     }
 
+    setEditingMode(value: boolean) 
+    {
+        if (!value) 
+        {
+            for (var i = 0; i < this.meshes.length; i++) {
+                var element = this.meshes[i];
+                this.scene.remove(element);
+                element = null;
+            }
+
+            this.meshes = [];
+            
+        } 
+        this.clickEnable = value;
+    }
+
     meshes: Array<THREE.Object3D> = new Array<THREE.Object3D>();
 
     mouseClick(event: MouseEvent) {
@@ -131,7 +145,6 @@ class Renderer {
                     this.connect()
                     return;
                 }
-
             }
 
         }
@@ -141,7 +154,23 @@ class Renderer {
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
         sphere.position.set(p.x, p.y, p.z);
 
-        this.meshes.push(sphere)
+        this.meshes.push(sphere);
+        var position = sphere.position;
+
+        var p2=new THREE.Vector3(0,100,0);
+
+
+        var target = p2.add(sphere.position);
+
+        var t = new TWEEN.Tween(position)
+						.to(target, 2000)
+						.delay(100)
+						.onUpdate(function() {
+							sphere.position.x = position.x;
+                            sphere.position.y = position.y;
+						});
+
+                         t.start();
         this.scene.add(sphere);
     }
 

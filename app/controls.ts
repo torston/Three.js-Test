@@ -6,7 +6,7 @@ class Controls {
 
     sceneSettings: SceneSettings;
 
-    constructor(private r: Renderer) {
+    constructor(private r: Renderer, private c: BuildingsController) {
     }
 
     initSceneMoveControls() {
@@ -51,7 +51,7 @@ class Controls {
 
     private setEditModeEnabled(value: boolean) {
         console.log("setEditModeEnabled: " + value);
-        this.r.setEditingMode(value);
+        this.c.setEditingMode(value);
     }
 
     private setSunRotate(value: boolean) {

@@ -1,13 +1,15 @@
-/// <reference path="../typings/globals/three/index.d.ts" />
-/// <reference path="../typings/globals/three-orbitcontrols/index.d.ts" />
-/// <reference path="../typings/globals/dat-gui/index.d.ts" />
-/// <reference path="../typings/globals/tween.js/index.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 window.onload = () => {
     var t = new Renderer();
     t.init();
 
-    var controls = new Controls(t);
+    var controller = new BuildingsController(t);
+
+    var controls = new Controls(t,controller);
+    
     controls.initSceneMoveControls();
     controls.initGlobalControls();
+
+
 }
 

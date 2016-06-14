@@ -2,9 +2,8 @@ class Renderer {
     public scene: THREE.Scene;
     public renderer: THREE.Renderer;
     public camera: THREE.Camera;
-
+    public ground: THREE.Object3D;
     public sunRotate: boolean = true;
-
 
     private sphere: THREE.Object3D;
     private time = new THREE.Clock(true);
@@ -17,13 +16,13 @@ class Renderer {
         this.renderer = this.createRenderer();
 
         var axisHelper = new THREE.AxisHelper(10);
-        var ground = this.createGround();
+        this.ground = this.createGround();
         this.sphere = this.createSun();
 
         this.scene.add(this.sphere);
         this.sphere.position.set(0, 500, 13);
         this.scene.add(axisHelper);
-        this.scene.add(ground);
+        this.scene.add(this.ground);
 
         this.render();
     }

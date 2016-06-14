@@ -10,6 +10,7 @@
     "removeComments": false
   },
   "files": [
+    "app/intersect-line.helper.ts",
     "app/renderer.ts",
     "app/buildings.helper.ts",
     "app/buildings.controller.ts",

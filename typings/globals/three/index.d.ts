@@ -5678,7 +5678,7 @@ declare namespace THREE {
     export namespace ShapeUtils {
         export function area(contour: number[]): number;
         export function triangulate(contour: number[], indices: boolean): number[];
-        export function triangulateShape(contour: number[], holes: any[]): number[];
+        export function triangulateShape(contour: any[], holes: any[]): number[];
         export function isClockWise(pts: number[]): boolean;
         export function b2(t: number, p0: number, p1: number, p2: number): number;
         export function b3(t: number, p0: number, p1: number, p2: number, p3: number): number;

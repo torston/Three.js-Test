@@ -6,7 +6,7 @@ class Controls {
 
     sceneSettings: SceneSettings;
 
-    constructor(private r: Renderer, private c: BuildingsController) {
+    constructor(private r: Renderer) {
     }
 
     initSceneMoveControls() {
@@ -30,14 +30,9 @@ class Controls {
         var gui = new dat.GUI();
 
         var sunRotateController = gui.add(s, 'sunRotation');
-        var editModeController = gui.add(s, 'editingMode');
 
         sunRotateController.onFinishChange((value: boolean) => {
             this.setSunRotate(value);
-        });
-
-        editModeController.onFinishChange((value: boolean) => {
-            this.setEditModeEnabled(value);
         });
 
         var folder = gui.addFolder("Sun Position")
@@ -47,11 +42,6 @@ class Controls {
 
         var setPositionButton = { set: () => { this.setPosition(); } };
         folder.add(setPositionButton, 'set');
-    }
-
-    private setEditModeEnabled(value: boolean) {
-        console.log("setEditModeEnabled: " + value);
-        this.c.setEditingMode(value);
     }
 
     private setSunRotate(value: boolean) {
@@ -72,7 +62,6 @@ class Controls {
  * SceneSettings
  */
 class SceneSettings {
-    editingMode: boolean = true;
     sunRotation: boolean = true;
     sunPositionX: number = 0;
     sunPositionY: number = 0;

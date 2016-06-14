@@ -83,7 +83,7 @@ class Renderer {
         var sphereGeometry = new THREE.SphereGeometry(30, 100, 100);
         var sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xCBD932 });
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        var spotLight = new THREE.PointLight(0xffffff, 2);
+        var spotLight = new THREE.PointLight(0xffffff, 1);
         spotLight.position.set(0, 500, 0);
         sphere.add(spotLight)
 

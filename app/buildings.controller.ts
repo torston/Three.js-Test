@@ -5,13 +5,13 @@ class BuildingsController {
 
     private clickEnable: boolean = true;
     private raycaster: THREE.Raycaster;
-    private mouse: THREE.Vector2;
-
-    private meshes: Array<THREE.Object3D> = new Array<THREE.Object3D>();
+    private helper: BuildingsHelper;
+    private meshes: Array<THREE.Object3D>;
 
     constructor(private r: Renderer) {
-        this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
+        this.meshes = new Array<THREE.Object3D>()
+        this.helper = new BuildingsHelper();
 
         document.getElementById("canvas").addEventListener('contextmenu', (event) => this.mouseClick(event), true);
     }
@@ -36,46 +36,48 @@ class BuildingsController {
             return;
         }
 
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        this.raycaster.setFromCamera(this.mouse, this.r.camera);
+        let mouse: THREE.Vector2 = new THREE.Vector2();;
 
+        mouse.x = ((event.clientX - this.r.renderer.domElement.offsetLeft) / this.r.renderer.domElement.width) * 2 - 1;
+        mouse.y = - ((event.clientY - this.r.renderer.domElement.offsetTop) / this.r.renderer.domElement.height) * 2 + 1;
 
-        var intersects = this.raycaster.intersectObjects(this.r.scene.children);
+        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
 
-        if (intersects.length == 0 || intersects == []) {
-            return;
+        this.raycaster.setFromCamera(mouse, this.r.camera);
+        var intersects = this.raycaster.intersectObjects(this.meshes);
+
+        if (intersects.length > 0) {
+            this.connect()
         }
+        else {
+            intersects = this.raycaster.intersectObjects(this.r.scene.children);
 
-        let firstIntersection = intersects[0].point;
-
-        for (var i = 0; i < intersects.length; i++) {
-            var element: THREE.Object3D = intersects[i].object;
-
-            for (var j = 0; j < this.meshes.length; j++) {
-                var existingPoint = this.meshes[j];
-                if (existingPoint.uuid == element.uuid) {
-                    this.connect()
-                    return;
-                }
+            if (intersects.length == 0 || intersects == []) {
+                return;
             }
 
+            let firstIntersection = intersects[0].point;
+            let sphere = this.helper.getPointMarker();
+
+            sphere.position.set(firstIntersection.x, 0, firstIntersection.z);
+
+            this.meshes.push(sphere);
+            this.r.scene.add(sphere);
         }
-
-        var sphereGeometry = new THREE.SphereGeometry(3, 32, 32);
-        var sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xF7BD72 });
-        var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-
-        sphere.position.set(firstIntersection.x, 0, firstIntersection.z);
-
-        this.meshes.push(sphere);
-        this.r.scene.add(sphere);
     }
 
 
     connect() {
         console.log("Connect!");
-        this.build(100);
+
+        var heightString = prompt("Please enter heights", "50");
+
+        var n = parseFloat(heightString);
+
+        if (!isNaN(n)) {
+            this.build(100);
+        }
+        
         this.cleanMeshes();
     }
 
@@ -110,8 +112,8 @@ class BuildingsController {
 
         var mesh = new THREE.Mesh(wallsGeometry, material);
 
-        var roofGeometry = new THREE.CircleGeometry(100, this.meshes.length);
-        //roofGeometry.vertices.splice(roofGeometry.vertices.length - 1);
+        var roofGeometry = new THREE.Geometry();
+
         for (var i = 0; i < this.meshes.length; i++) {
             roofGeometry.vertices[roofGeometry.vertices.length - 3 - i] = (new THREE.Vector3(0, height, 0)).add(this.meshes[i].position)
         }
@@ -120,22 +122,36 @@ class BuildingsController {
         var totalY: number = 0;
 
         for (var i = 0; i < this.meshes.length; i++) {
+            roofGeometry.vertices.push((new THREE.Vector3(0, height, 0)).add(this.meshes[i].position));
             totalX += (this.meshes[i].position.x);
             totalY += (this.meshes[i].position.z);
         }
 
         var midPoint = new THREE.Vector3(totalX / this.meshes.length, height, totalY / this.meshes.length);
 
-        roofGeometry.vertices[roofGeometry.vertices.length - 1] = midPoint;
-        //roofGeometry.vertices[roofGeometry.vertices.length - 2] = midPoint;
+        roofGeometry.vertices.push(midPoint);
+
+        var lastVertIndex = roofGeometry.vertices.length - 1;
+
+        var mark: boolean = false;
+        for (var i = 0; i < roofGeometry.vertices.length; i++) {
+            mark = !mark;
+
+            let next = i + 1 == this.meshes.length ? 0 : i + 1;
+
+            if (mark) {
+                roofGeometry.faces.push(new THREE.Face3(lastVertIndex, next, i));
+            } else {
+                roofGeometry.faces.push(new THREE.Face3(i, lastVertIndex, next));
+            }
+        }
 
         roofGeometry.mergeMesh(mesh);
         roofGeometry.computeFaceNormals();
-        roofGeometry.faceVertexUvs = [];
 
         var cylinder = new THREE.Mesh(roofGeometry, material);
 
-        cylinder.position.setY(-height);
+        cylinder.position.setY(-height - 1);
 
         this.r.scene.add(cylinder)
         this.moveUp(cylinder, height);

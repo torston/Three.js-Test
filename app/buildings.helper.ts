@@ -8,8 +8,13 @@ class BuildingsHelper {
         return sphere;
     }
 
-    build(height: number,positions:THREE.Vector3[]) : THREE.Object3D
-    {
+    build(height: number, positions: THREE.Vector3[]): THREE.Object3D {
+
+        var reverse = this.isClockwise(positions);
+
+        if (reverse) {
+            positions = positions.reverse();
+        }
         var material = new THREE.MeshLambertMaterial({ color: 0xcccccc });
         var wallsGeometry = new THREE.Geometry();
 
@@ -74,6 +79,16 @@ class BuildingsHelper {
 
         return cylinder;
 
+    }
+
+    isClockwise(vertices: THREE.Vector3[]): boolean {
+        var sum = 0.0;
+        for (var i = 0; i < vertices.length; i++) {
+            let v1 = vertices[i];
+            let v2 = vertices[(i + 1) % vertices.length];
+            sum += (v2.x - v1.x) * (v2.z + v1.z);
+        } THREE.Vector3
+        return sum > 0.0;
     }
 
 }
